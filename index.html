@@ -21,7 +21,6 @@
 <link rel="preconnect" href="https://fonts.googleapis.com">
 <link href="https://fonts.googleapis.com/css2?family=Be+Vietnam+Pro:wght@300;400;500;600;700;800&family=Playfair+Display:wght@700&display=swap" rel="stylesheet">
 <link href="https://fonts.googleapis.com/css2?family=Material+Symbols+Outlined:opsz,wght,FILL,GRAD@20..48,100..700,0..1,-50..200" rel="stylesheet"/>
-<script src="https://apis.google.com/js/api.js"></script>
 <!-- Firebase SDK -->
 <script type="module" id="firebase-module">
 import { initializeApp } from "https://www.gstatic.com/firebasejs/10.12.0/firebase-app.js";
@@ -231,7 +230,7 @@ window._fb = { auth:_auth, db:_db, provider:_provider, signInWithPopup, signOut,
   .settings-item-sub { font-size: 11px; color: var(--text-muted); margin-top: 2px; }
   .settings-item-arrow { color: var(--text-muted); font-size: 20px; }
   /* GOOGLE STATUS */
-  #google-status { font-size: 12px; margin-top: 8px; padding: 8px 12px; border-radius: 8px; background: var(--bg); }
+
   /* TOAST */
   #toast { position: fixed; bottom: 90px; left: 50%; transform: translateX(-50%) translateY(20px); background: var(--text); color: white; padding: 12px 20px; border-radius: 99px; font-size: 13px; font-weight: 500; opacity: 0; transition: all .3s; z-index: 999; white-space: nowrap; pointer-events: none; max-width: 90%; }
   #toast.show { opacity: 1; transform: translateX(-50%) translateY(0); }
@@ -244,9 +243,7 @@ window._fb = { auth:_auth, db:_db, provider:_provider, signInWithPopup, signOut,
   .fund-btn { flex: 1; padding: 8px; border-radius: 8px; border: 1.5px solid var(--border); background: var(--bg); font-family: inherit; font-size: 12px; font-weight: 600; cursor: pointer; transition: all .2s; display: flex; align-items: center; justify-content: center; gap: 4px; }
   .fund-btn:hover { border-color: var(--primary); color: var(--primary); background: var(--primary-light); }
   /* DRIVE BTN */
-  .drive-status { display: inline-flex; align-items: center; gap: 6px; font-size: 12px; font-weight: 600; padding: 6px 12px; border-radius: 99px; }
-  .drive-status.connected { background: #E8F7F0; color: var(--success); }
-  .drive-status.disconnected { background: #FEF0F0; color: var(--danger); }
+
   /* EXPORT MODALS */
   .export-option { display: flex; align-items: center; gap: 12px; padding: 14px; border: 1.5px solid var(--border); border-radius: var(--radius-sm); margin-bottom: 10px; cursor: pointer; transition: all .2s; background: white; }
   .export-option:hover { border-color: var(--primary); background: var(--primary-light); }
@@ -490,7 +487,6 @@ window._fb = { auth:_auth, db:_db, provider:_provider, signInWithPopup, signOut,
       <section>
         <div class="section-header">
           <h3 class="section-title">Phân bổ quỹ</h3>
-          <button class="btn-link" onclick="openFundModal()">+ Thêm quỹ</button>
         </div>
         <div id="fund-list">
           <div class="empty-state"><span class="material-symbols-outlined">folder_open</span><p>Chưa có quỹ nào</p></div>
@@ -660,15 +656,6 @@ window._fb = { auth:_auth, db:_db, provider:_provider, signInWithPopup, signOut,
           <div class="settings-item-info">
             <div class="settings-item-title">Đồng bộ thủ công</div>
             <div class="settings-item-sub" id="firebase-last-sync">Chưa đồng bộ</div>
-          </div>
-          <span class="material-symbols-outlined settings-item-arrow">chevron_right</span>
-        </div>
-      </div>
-        <div class="settings-item" onclick="openBackupModal()">
-          <div class="settings-item-icon" style="background:#E8F0FE; color:#1A73E8"><span class="material-symbols-outlined">cloud_upload</span></div>
-          <div class="settings-item-info">
-            <div class="settings-item-title">Sao lưu lên Google Drive</div>
-            <div class="settings-item-sub" id="drive-status-text">Chưa kết nối</div>
           </div>
           <span class="material-symbols-outlined settings-item-arrow">chevron_right</span>
         </div>
@@ -955,38 +942,6 @@ window._fb = { auth:_auth, db:_db, provider:_provider, signInWithPopup, signOut,
   </div>
 </div>
 
-<!-- BACKUP MODAL -->
-<div class="modal-overlay" id="backup-modal">
-  <div class="modal">
-    <div class="modal-handle"></div>
-    <div class="modal-title">Sao lưu Google Drive</div>
-    <div style="background:var(--bg); border-radius:12px; padding:16px; margin-bottom:16px;">
-      <p style="font-size:13px; color:var(--text-muted); line-height:1.6;">
-        Để sao lưu lên Google Drive, bạn cần cấu hình <strong>Google API Client ID</strong>. 
-        Truy cập <a href="https://console.cloud.google.com" target="_blank" style="color:var(--info)">console.cloud.google.com</a>, 
-        tạo OAuth 2.0 Client ID và dán vào bên dưới.
-      </p>
-    </div>
-    <div class="form-group">
-      <label class="form-label">Google OAuth Client ID</label>
-      <input class="form-input" id="client-id-input" type="text" placeholder="xxxxxxxx.apps.googleusercontent.com">
-    </div>
-    <div id="google-status" style="display:none"></div>
-    <button class="btn btn-primary" id="btn-gdrive-connect" onclick="initGoogleDrive()">
-      <span class="material-symbols-outlined" style="font-size:18px; vertical-align:middle; margin-right:4px">account_circle</span>
-      Kết nối Google
-    </button>
-    <button class="btn btn-success" id="btn-gdrive-backup" style="display:none" onclick="backupToDrive()">
-      <span class="material-symbols-outlined" style="font-size:18px; vertical-align:middle; margin-right:4px">cloud_upload</span>
-      Sao lưu ngay
-    </button>
-    <button class="btn btn-secondary" id="btn-gdrive-restore" style="display:none" onclick="restoreFromDrive()">
-      <span class="material-symbols-outlined" style="font-size:18px; vertical-align:middle; margin-right:4px">cloud_download</span>
-      Khôi phục từ Drive
-    </button>
-    <button class="btn btn-secondary" onclick="closeModal('backup-modal')">Đóng</button>
-  </div>
-</div>
 
 <!-- NEIGHBORHOOD NAME MODAL -->
 <div class="modal-overlay" id="nb-modal">
@@ -1091,9 +1046,6 @@ let currentTxType = 'income';
 let editingTxId = null;
 let reportMonth = new Date();
 let filterActive = 'all';
-let googleAuth = null;
-let gapiReady = false;
-let driveConnected = false;
 let firestoreUnsubscribe = null;
 let lastSyncTime = null;
 
@@ -1533,7 +1485,7 @@ function renderReport() {
 function renderSettings() {
   document.getElementById('nb-name-sub').textContent = data.neighborhoodName;
   document.getElementById('fund-count-sub').textContent = `${data.funds.length} quỹ đang hoạt động`;
-  document.getElementById('drive-status-text').textContent = driveConnected ? '✓ Đã kết nối' : 'Chưa kết nối';
+  updateFirebaseSyncUI();
 }
 
 // ===== NAVIGATION =====
@@ -1584,13 +1536,6 @@ function openFundModal() {
   document.getElementById('fund-name').value = '';
   document.getElementById('fund-initial').value = '';
   document.getElementById('fund-modal').classList.add('open');
-}
-
-function openBackupModal() {
-  const saved = localStorage.getItem('gdrive_client_id');
-  if (saved) document.getElementById('client-id-input').value = saved;
-  updateDriveModalUI();
-  document.getElementById('backup-modal').classList.add('open');
 }
 
 function openNeighborhoodModal() {
@@ -2158,133 +2103,6 @@ function numberToVietnamese(num) {
   return result.trim().replace(/\s+/g,' ').charAt(0).toUpperCase() + result.trim().replace(/\s+/g,' ').slice(1) + ' đồng';
 }
 
-// ===== GOOGLE DRIVE =====
-const SCOPES = 'https://www.googleapis.com/auth/drive.file';
-const BACKUP_FILENAME = 'khu_pho_finance_backup.json';
-
-function initGoogleDrive() {
-  const clientId = document.getElementById('client-id-input').value.trim();
-  if (!clientId) { showToast('⚠️ Vui lòng nhập Client ID'); return; }
-  localStorage.setItem('gdrive_client_id', clientId);
-  updateDriveStatus('Đang tải Google API...');
-  gapi.load('client:auth2', () => {
-    gapi.client.init({
-      clientId: clientId,
-      scope: SCOPES,
-      discoveryDocs: ['https://www.googleapis.com/discovery/v1/apis/drive/v3/rest']
-    }).then(() => {
-      googleAuth = gapi.auth2.getAuthInstance();
-      gapiReady = true;
-      if (googleAuth.isSignedIn.get()) {
-        driveConnected = true;
-        updateDriveModalUI();
-        updateDriveStatus('✓ Đã đăng nhập: ' + googleAuth.currentUser.get().getBasicProfile().getEmail());
-        renderSettings();
-      } else {
-        return googleAuth.signIn();
-      }
-    }).then(() => {
-      if (googleAuth && googleAuth.isSignedIn.get()) {
-        driveConnected = true;
-        updateDriveModalUI();
-        updateDriveStatus('✓ Đã kết nối: ' + googleAuth.currentUser.get().getBasicProfile().getEmail());
-        renderSettings();
-        showToast('✅ Kết nối Google Drive thành công');
-      }
-    }).catch(err => {
-      console.error(err);
-      updateDriveStatus('❌ Lỗi: ' + (err.error || err.message || 'Không thể kết nối'));
-    });
-  });
-}
-
-function updateDriveStatus(msg) {
-  const el = document.getElementById('google-status');
-  el.style.display = 'block';
-  el.textContent = msg;
-}
-
-function updateDriveModalUI() {
-  document.getElementById('btn-gdrive-connect').style.display = driveConnected ? 'none' : 'block';
-  document.getElementById('btn-gdrive-backup').style.display = driveConnected ? 'block' : 'none';
-  document.getElementById('btn-gdrive-restore').style.display = driveConnected ? 'block' : 'none';
-}
-
-async function backupToDrive() {
-  if (!gapiReady || !driveConnected) { showToast('⚠️ Chưa kết nối Google Drive'); return; }
-  updateDriveStatus('Đang sao lưu...');
-  try {
-    // Check if file exists
-    const listRes = await gapi.client.drive.files.list({
-      q: `name='${BACKUP_FILENAME}' and trashed=false`,
-      fields: 'files(id,name)'
-    });
-    const files = listRes.result.files;
-    const content = JSON.stringify(data, null, 2);
-    const boundary = '-------314159265358979323846';
-    const delimiter = '\r\n--' + boundary + '\r\n';
-    const close_delim = '\r\n--' + boundary + '--';
-    const metadata = { name: BACKUP_FILENAME, mimeType: 'application/json' };
-    const multipartBody = delimiter +
-      'Content-Type: application/json\r\n\r\n' + JSON.stringify(metadata) +
-      delimiter + 'Content-Type: application/json\r\n\r\n' + content + close_delim;
-
-    let result;
-    if (files.length > 0) {
-      result = await gapi.client.request({
-        path: `/upload/drive/v3/files/${files[0].id}`,
-        method: 'PATCH',
-        params: { uploadType: 'multipart' },
-        headers: { 'Content-Type': 'multipart/related; boundary="' + boundary + '"' },
-        body: multipartBody
-      });
-    } else {
-      result = await gapi.client.request({
-        path: '/upload/drive/v3/files',
-        method: 'POST',
-        params: { uploadType: 'multipart' },
-        headers: { 'Content-Type': 'multipart/related; boundary="' + boundary + '"' },
-        body: multipartBody
-      });
-    }
-    updateDriveStatus('✅ Sao lưu thành công! ' + new Date().toLocaleString('vi-VN'));
-    showToast('☁️ Đã sao lưu lên Google Drive');
-  } catch(err) {
-    console.error(err);
-    updateDriveStatus('❌ Lỗi sao lưu: ' + (err.result?.error?.message || err.message || 'Thử lại'));
-    showToast('❌ Sao lưu thất bại');
-  }
-}
-
-async function restoreFromDrive() {
-  if (!gapiReady || !driveConnected) { showToast('⚠️ Chưa kết nối Google Drive'); return; }
-  updateDriveStatus('Đang tìm file backup...');
-  try {
-    const listRes = await gapi.client.drive.files.list({
-      q: `name='${BACKUP_FILENAME}' and trashed=false`,
-      fields: 'files(id,name,modifiedTime)'
-    });
-    const files = listRes.result.files;
-    if (files.length === 0) {
-      updateDriveStatus('⚠️ Không tìm thấy file backup trên Drive');
-      return;
-    }
-    if (!confirm(`Tìm thấy backup (${new Date(files[0].modifiedTime).toLocaleString('vi-VN')}). Khôi phục sẽ ghi đè dữ liệu hiện tại. Tiếp tục?`)) return;
-    updateDriveStatus('Đang tải về...');
-    const res = await gapi.client.drive.files.get({ fileId: files[0].id, alt: 'media' });
-    const imported = typeof res.result === 'string' ? JSON.parse(res.result) : res.result;
-    if (!imported.transactions || !imported.funds) throw new Error('Invalid format');
-    data = imported;
-    saveData();
-    render();
-    updateDriveStatus('✅ Khôi phục thành công!');
-    showToast('✅ Đã khôi phục dữ liệu từ Google Drive');
-  } catch(err) {
-    console.error(err);
-    updateDriveStatus('❌ Lỗi khôi phục: ' + (err.message || 'Thử lại'));
-    showToast('❌ Khôi phục thất bại');
-  }
-}
 
 // ===== PWA SETUP =====
 let deferredInstallPrompt = null;
@@ -2793,24 +2611,7 @@ function initApp() {
 }
 initApp();
 
-// Auto-try to reconnect Google Drive if Client ID saved
-const savedClientId = localStorage.getItem('gdrive_client_id');
-if (savedClientId) {
-  gapi.load('client:auth2', () => {
-    gapi.client.init({
-      clientId: savedClientId,
-      scope: SCOPES,
-      discoveryDocs: ['https://www.googleapis.com/discovery/v1/apis/drive/v3/rest']
-    }).then(() => {
-      googleAuth = gapi.auth2.getAuthInstance();
-      gapiReady = true;
-      if (googleAuth.isSignedIn.get()) {
-        driveConnected = true;
-        renderSettings();
-      }
-    }).catch(() => {});
-  });
-}
+
 </script>
 </body>
 </html>
